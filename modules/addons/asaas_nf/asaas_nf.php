@@ -152,7 +152,7 @@ function asaas_nf_config()
                 'FriendlyName' => 'Indicador da operação',
                 'Type' => 'text',
                 'Size' => '20',
-                'Default' => '010103',
+                'Default' => '100301',
                 'Description' => '<br><small style="color:#777;">Enviado em taxes.operationIndicatorCode. Deixe vazio para não enviar.</small>',
             ),
             'taxes' => array(
