@@ -99,7 +99,7 @@ Ordem de escolha do serviço em cada emissão:
 | Código NBS | `taxes.nbsCode` | `1.1506.21.00` |
 | Situação tributária IBS/CBS (CST) | `taxes.taxSituationCode` | `000` |
 | Classificação tributária (cClassTrib) | `taxes.taxClassificationCode` | `000001` |
-| Indicador da operação | `taxes.operationIndicatorCode` | `010103` |
+| Indicador da operação | `taxes.operationIndicatorCode` | `100301` |
 | Tributos padrão | `taxes.iss`, `pis`, `cofins`, `csll`, `inss`, `ir`, `retainIss`, `operationPis`, `operationCofins`, `pisCofinsTaxStatus` | `{"iss":5,"pis":0,"cofins":0,"csll":0,"inss":0,"ir":0,"retainIss":false,"pisCofinsTaxStatus":"STANDARD_TAXABLE_OPERATION","operationPis":0.65,"operationCofins":3}` |
 
 - Campos da Reforma deixados em branco **não são enviados**.
