@@ -1171,6 +1171,13 @@ function asaas_nf_get_last_nf_line($notes)
     return trim((string) end($matches[0]));
 }
 
+function asaas_nf_is_error_status($notes)
+{
+    $noteText = asaas_nf_get_last_nf_line($notes);
+
+    return stripos($noteText, 'INVOICE_ERROR') !== false || stripos($noteText, 'Erro') !== false;
+}
+
 function asaas_nf_get_status_badge($notes)
 {
     $noteText = asaas_nf_get_last_nf_line($notes);
@@ -1178,7 +1185,7 @@ function asaas_nf_get_status_badge($notes)
         return '<span class="label label-default">Pendente</span>';
     }
 
-    if (stripos($noteText, 'INVOICE_ERROR') !== false || stripos($noteText, 'Erro') !== false) {
+    if (asaas_nf_is_error_status($notes)) {
         return '<span class="label label-danger">Erro na NF</span>';
     }
 

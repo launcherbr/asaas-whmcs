@@ -315,12 +315,19 @@ function asaas_nf_output($vars)
     $countBase = function () {
         return Capsule::table('tblinvoices')->whereNotIn('status', array('Cancelled', 'Draft', 'Refunded', 'Collections'));
     };
+    $errorCandidates = $countBase()->whereRaw('LOWER(COALESCE(notes, "")) LIKE ?', array('%asaas nf%'))
+        ->whereRaw('LOWER(notes) LIKE ?', array('%erro%'))->pluck('notes');
+    $errorCount = 0;
+    foreach ($errorCandidates as $invoiceNotes) {
+        if (asaas_nf_is_error_status($invoiceNotes)) {
+            $errorCount++;
+        }
+    }
+
     $stats = array(
         'pending' => $countBase()->whereRaw('LOWER(COALESCE(notes, "")) NOT LIKE ?', array('%asaas nf%'))->count(),
         'emitted' => $countBase()->whereRaw('LOWER(COALESCE(notes, "")) LIKE ?', array('%asaas nf%'))->count(),
-        // "erro" também cobre INVOICE_ERROR, como em asaas_nf_get_status_badge().
-        'errors' => $countBase()->whereRaw('LOWER(COALESCE(notes, "")) LIKE ?', array('%asaas nf%'))
-            ->whereRaw('LOWER(notes) LIKE ?', array('%erro%'))->count(),
+        'errors' => $errorCount,
     );
 
     $emissionMode = (string) ($vars['emissionMode'] ?? 'manual');
