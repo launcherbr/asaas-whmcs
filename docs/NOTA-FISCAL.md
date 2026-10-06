@@ -78,19 +78,21 @@ Os eventos de pagamento, assinatura e Pix Automático do gateway estão listados
 
 | Campo | Descrição |
 |---|---|
+| Tipo de serviço fiscal | **Serviço municipal** (padrão) ou **Simples Nacional (Portal Nacional)**. O tipo deve ser escolhido explicitamente para evitar que o código nacional seja enviado a empresas que não estão no Simples Nacional. |
 | Serviço usado na NF | **Sempre o serviço padrão:** todas as notas usam o mesmo serviço. **Um serviço por produto do WHMCS:** o nome do produto vira o nome do serviço (um cadastro por produto, reaproveitado nas notas seguintes). |
 | ID do serviço municipal | Opcional. `id` de `GET /v3/fiscalInfo/services`. Quando preenchido, é usado no modo padrão e o código não é enviado. |
 | Nome do serviço padrão | Nome **exato** do serviço já cadastrado no Asaas. O addon procura esse nome antes de enviar o código, para não duplicar. |
-| Código do serviço municipal | Enviado como `municipalServiceCode` quando não há ID. Vazio = usa o código de tributação nacional. |
-| Código de tributação nacional | Ex.: `01.03.02` (hospedagem de dados), no formato com pontos. Usado no Portal Nacional. |
+| Código do serviço municipal | Enviado como `municipalServiceCode` quando não há ID e o tipo escolhido é municipal. |
+| Código de tributação nacional | Ex.: `01.03.02` (hospedagem de dados), no formato com pontos. Só é usado quando o tipo escolhido é **Simples Nacional**. |
 | Descrição padrão | Usada na descrição da nota quando a fatura não tem itens com descrição. |
 | Município padrão da prestação | Mantido por compatibilidade; não é enviado na API atual de notas. |
 
 Ordem de escolha do serviço em cada emissão:
 
-1. ID configurado (modo padrão);
-2. serviço já existente no Asaas com o mesmo nome;
-3. código do serviço + nome fixo.
+1. Para o Simples Nacional: código de tributação nacional configurado.
+2. Para o serviço municipal: ID configurado (modo padrão), depois serviço já existente no Asaas com o mesmo nome, depois código municipal + nome fixo.
+
+> A configuração anterior não tinha um tipo explícito e usava o código nacional como fallback. Depois desta alteração, o padrão é municipal e o código nacional só é enviado quando a opção **Simples Nacional** for selecionada.
 
 ### Tributos e Reforma Tributária (IBS/CBS)
 

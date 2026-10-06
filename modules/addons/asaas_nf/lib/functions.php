@@ -327,6 +327,12 @@ function asaas_nf_invoice_has_nf_record($invoiceId)
     }
 }
 
+function asaas_nf_get_service_type($vars)
+{
+    $serviceType = strtolower(trim((string) ($vars['serviceType'] ?? 'municipal')));
+    return in_array($serviceType, array('municipal', 'national'), true) ? $serviceType : 'municipal';
+}
+
 function asaas_nf_validate_production_requirements($vars)
 {
     $errors = array();
@@ -336,11 +342,16 @@ function asaas_nf_validate_production_requirements($vars)
         $errors[] = 'Chave de API do Asaas';
     }
 
+    $serviceType = asaas_nf_get_service_type($vars);
     $municipalServiceId = trim((string) ($vars['municipalServiceId'] ?? ''));
     $serviceCode = trim((string) ($vars['serviceCode'] ?? ''));
     $nationalServiceCode = trim((string) ($vars['nationalServiceCode'] ?? ''));
-    if ($municipalServiceId === '' && $serviceCode === '' && $nationalServiceCode === '') {
-        $errors[] = 'ID do serviço municipal ou código do serviço';
+    if ($serviceType === 'national') {
+        if ($nationalServiceCode === '') {
+            $errors[] = 'Código de tributação nacional';
+        }
+    } elseif ($municipalServiceId === '' && $serviceCode === '') {
+        $errors[] = 'ID ou código do serviço municipal';
     }
 
     $municipalServiceName = trim((string) ($vars['municipalServiceName'] ?? ''));
@@ -616,12 +627,12 @@ function asaas_nf_get_product_service_name($lineItems)
 function asaas_nf_resolve_municipal_service($apiUrl, $apiKey, $vars, $lineItems)
 {
     $mode = strtolower(trim((string) ($vars['serviceMode'] ?? 'default')));
+    $serviceType = asaas_nf_get_service_type($vars);
     $defaultName = asaas_nf_truncate(asaas_nf_sanitize_service_description($vars['municipalServiceName'] ?? ''), 250);
     $configuredId = trim((string) ($vars['municipalServiceId'] ?? ''));
-    $serviceCode = trim((string) ($vars['serviceCode'] ?? ''));
-    if ($serviceCode === '') {
-        $serviceCode = trim((string) ($vars['nationalServiceCode'] ?? ''));
-    }
+    $serviceCode = $serviceType === 'national'
+        ? trim((string) ($vars['nationalServiceCode'] ?? ''))
+        : trim((string) ($vars['serviceCode'] ?? ''));
 
     $serviceName = $defaultName;
     if ($mode === 'per_product') {
@@ -633,6 +644,17 @@ function asaas_nf_resolve_municipal_service($apiUrl, $apiKey, $vars, $lineItems)
 
     if ($serviceName === '') {
         return array('error' => 'Nome do serviço padrão não configurado no addon Asaas NF.');
+    }
+
+    if ($serviceType === 'national') {
+        if ($serviceCode === '') {
+            return array('error' => 'Código de tributação nacional não configurado no addon Asaas NF.');
+        }
+
+        return array(
+            'municipalServiceCode' => $serviceCode,
+            'municipalServiceName' => $serviceName,
+        );
     }
 
     if ($configuredId !== '' && $serviceName === $defaultName) {
@@ -648,7 +670,7 @@ function asaas_nf_resolve_municipal_service($apiUrl, $apiKey, $vars, $lineItems)
     }
 
     if ($serviceCode === '') {
-        return array('error' => 'Serviço "' . $serviceName . '" não encontrado no Asaas e nenhum código de serviço foi configurado.');
+        return array('error' => 'Serviço "' . $serviceName . '" não encontrado no Asaas e nenhum código de serviço municipal foi configurado.');
     }
 
     return array(

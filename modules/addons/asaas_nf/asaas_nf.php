@@ -81,6 +81,16 @@ function asaas_nf_config()
                 'Default' => 'default',
                 'Description' => '<br><small style="color:#777;">"Serviço padrão" usa sempre o mesmo serviço municipal no Asaas. "Por produto" usa o nome do produto WHMCS como nome do serviço (um único cadastro por produto, reaproveitado nas próximas notas). O detalhe de cada fatura vai apenas na descrição da nota, nunca no nome do serviço.</small>',
             ),
+            'serviceType' => array(
+                'FriendlyName' => 'Tipo de serviço fiscal',
+                'Type' => 'dropdown',
+                'Options' => array(
+                    'municipal' => 'Serviço municipal',
+                    'national' => 'Simples Nacional (Portal Nacional)',
+                ),
+                'Default' => 'municipal',
+                'Description' => '<br><small style="color:#777;">Selecione explicitamente o tipo de serviço. O código nacional nunca será usado para empresas que não estão no Simples Nacional.</small>',
+            ),
             'municipalServiceId' => array(
                 'FriendlyName' => 'ID do serviço municipal (opcional)',
                 'Type' => 'text',
@@ -100,14 +110,14 @@ function asaas_nf_config()
                 'Type' => 'text',
                 'Size' => '20',
                 'Default' => '',
-                'Description' => '<br><small style="color:#777;">Enviado como municipalServiceCode quando não há ID de serviço. Deixe vazio para usar o código de tributação nacional abaixo (contas no Portal Nacional).</small>',
+                'Description' => '<br><small style="color:#777;">Enviado como municipalServiceCode quando o tipo de serviço é municipal e não há ID de serviço.</small>',
             ),
             'nationalServiceCode' => array(
                 'FriendlyName' => 'Código de tributação nacional',
                 'Type' => 'text',
                 'Size' => '20',
                 'Default' => '01.03.02',
-                'Description' => '<br><small style="color:#777;">Ex.: 01.03.02 - armazenamento ou hospedagem de dados (formato com pontos, como no Asaas). Usado como municipalServiceCode quando o campo acima estiver vazio.</small>',
+                'Description' => '<br><small style="color:#777;">Ex.: 01.03.02 - armazenamento ou hospedagem de dados (formato com pontos, como no Asaas). Só é usado quando o tipo de serviço é Simples Nacional.</small>',
             ),
             'serviceProvisionCityDefaultType' => array(
                 'FriendlyName' => 'Município padrão da prestação',
