@@ -16,7 +16,7 @@ function asaas_nf_MetaData()
     return array(
         'DisplayName' => 'Asaas NF',
         'Description' => 'Módulo de emissão fiscal para WHMCS com integração ao Asaas.',
-        'Author' => 'Launcher Tech',
+        'Author' => 'HubApp',
         'Version' => '1.0.0',
         'APIVersion' => '1.1',
         'Language' => 'english',
@@ -28,7 +28,7 @@ function asaas_nf_config()
     return array(
         'name' => 'Asaas NF',
         'description' => 'Módulo de emissão fiscal para WHMCS com integração ao Asaas.',
-        'author' => 'Launcher Tech',
+        'author' => 'HubApp',
         'version' => '1.0.0',
         'fields' => array(
             'apiKey' => array(
